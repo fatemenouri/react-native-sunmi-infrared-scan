@@ -1,4 +1,4 @@
-package com.sunmi.iscanner;
+package com.sunmi.scanner;
 
 /**
  * Created by januslo on 2017/5/16.

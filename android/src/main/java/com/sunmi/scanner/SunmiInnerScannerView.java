@@ -1,4 +1,4 @@
-package com.sunmi.iscanner;
+package com.sunmi.scanner;
 
 import android.content.Context;
 import android.content.res.Configuration;

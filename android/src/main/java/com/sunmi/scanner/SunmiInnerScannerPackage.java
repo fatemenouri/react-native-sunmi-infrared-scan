@@ -1,4 +1,4 @@
-package com.sunmi.iscanner;
+package com.sunmi.scanner;
 
 import android.view.View;
 import com.facebook.react.ReactPackage;
