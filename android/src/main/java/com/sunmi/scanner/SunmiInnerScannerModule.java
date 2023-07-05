@@ -1,4 +1,4 @@
-package com.sunmi.scanner;
+package com.sunmi.iscanner;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import com.sunmi.scanner.IScanInterface;
+import com.sunmi.iscanner.IScanInterface;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
@@ -28,7 +28,7 @@ public class SunmiInnerScannerModule extends ReactContextBaseJavaModule{
     private Intent serviceIntent;
     private Context activity;
     private boolean singleScanFlag = false;
-    public static final String ACTION_DATA_CODE_RECEIVED = "com.sunmi.scanner.ACTION_DATA_CODE_RECEIVED";
+    public static final String ACTION_DATA_CODE_RECEIVED = "com.sunmi.iscanner.ACTION_DATA_CODE_RECEIVED";
         private static final String DATA = "data";
 
     private final ActivityEventListener eventListener = new BaseActivityEventListener() {
@@ -101,8 +101,8 @@ public class SunmiInnerScannerModule extends ReactContextBaseJavaModule{
 
     private void bindService() {
         serviceIntent = new Intent();
-        serviceIntent.setPackage("com.sunmi.scanner");
-        serviceIntent.setAction("com.sunmi.scanner.IScanInterface");
+        serviceIntent.setPackage("com.sunmi.iscanner");
+        serviceIntent.setAction("com.sunmi.iscanner.IScanInterface");
         Activity currentActivity = getCurrentActivity();
         // Log.d("scan", "check:" + activity.bindService(serviceIntent, conn, Service.BIND_AUTO_CREATE));
         currentActivity.bindService(serviceIntent, conn, Service.BIND_AUTO_CREATE);
@@ -157,8 +157,8 @@ public class SunmiInnerScannerModule extends ReactContextBaseJavaModule{
         // intent.setPackage("com.sunmi.sunmiqrcodescanner");
 
         serviceIntent = new Intent();
-        serviceIntent.setPackage("com.sunmi.scanner");
-        serviceIntent.setAction("com.sunmi.scanner.IScanInterface");
+        serviceIntent.setPackage("com.sunmi.iscanner");
+        serviceIntent.setAction("com.sunmi.iscanner.IScanInterface");
         currentActivity.bindService(serviceIntent, conn, Service.BIND_AUTO_CREATE);
         // currentActivity.startActivityForResult(serviceIntent, 2345);
 

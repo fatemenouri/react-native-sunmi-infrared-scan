@@ -1,4 +1,4 @@
-package com.sunmi.scanner;
+package com.sunmi.iscanner;
 
 import android.view.View;
 import com.facebook.react.uimanager.ThemedReactContext;
