@@ -9,17 +9,34 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import com.sunmi.scanner.IScanInterface;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.app.Service;
+import android.content.Context;
+import android.util.Log;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
+import android.os.RemoteException;
 
-public class SunmiInnerScannerModule extends ReactContextBaseJavaModule {
+public class SunmiInnerScannerModule extends ReactContextBaseJavaModule{
 
     private static final String TAG = "SunmiInnerScannerModule";
     private Promise promise;
+    private static IScanInterface scanInterface;
+    private Intent serviceIntent;
+    private Context activity;
+    private boolean singleScanFlag = false;
+    public static final String ACTION_DATA_CODE_RECEIVED = "com.sunmi.scanner.ACTION_DATA_CODE_RECEIVED";
+        private static final String DATA = "data";
 
     private final ActivityEventListener eventListener = new BaseActivityEventListener() {
 
         @Override
         public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
             try {
+                
                 if (requestCode == 2345 && data != null) {
                     Bundle bundle = data.getExtras();
                     ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) bundle.getSerializable("data");
@@ -47,11 +64,57 @@ public class SunmiInnerScannerModule extends ReactContextBaseJavaModule {
         }
     };
 
+
+        private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+                    String code = intent.getStringExtra(DATA);
+                    if (code != null && !code.isEmpty()) {
+                        if (singleScanFlag) {
+                            singleScanFlag = false;
+                            try {
+                                scanInterface.stop();
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                
+            
+        }
+    };
+
+
+
+    private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            scanInterface = IScanInterface.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            scanInterface = null;
+        }
+    };
+
+
+    private void bindService() {
+        serviceIntent = new Intent();
+        serviceIntent.setPackage("com.sunmi.scanner");
+        serviceIntent.setAction("com.sunmi.scanner.IScanInterface");
+        Activity currentActivity = getCurrentActivity();
+        // Log.d("scan", "check:" + activity.bindService(serviceIntent, conn, Service.BIND_AUTO_CREATE));
+        currentActivity.bindService(serviceIntent, conn, Service.BIND_AUTO_CREATE);
+    }
+
     public SunmiInnerScannerModule(ReactApplicationContext reactContext) {
         super(reactContext);
         // Add the listener for `onActivityResult`
+        // registerReceiver();
         reactContext.addActivityEventListener(eventListener);
     }
+
 
     @Override
     public String getName() {
@@ -64,6 +127,48 @@ public class SunmiInnerScannerModule extends ReactContextBaseJavaModule {
         options.putBoolean("showSetting", false);
         options.putBoolean("showAlbum", false);
         openScannerWithOptions(options, p);
+    }
+
+
+    @ReactMethod
+    public void init() {
+        bindService();
+        registerReceiver();
+    }
+
+
+    private void registerReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_DATA_CODE_RECEIVED);
+        activity.registerReceiver(receiver, intentFilter);
+    }
+
+
+    @ReactMethod
+    public void openInfraredScanner(final Promise p) {
+        promise = p;
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity == null) {
+            promise.reject("E_ACTIVITY_DOES_NOT_EXIST", "Activity doesn't exist");
+            return;
+        }
+
+        // final Intent intent = new Intent("com.summi.scan");
+        // intent.setPackage("com.sunmi.sunmiqrcodescanner");
+
+        serviceIntent = new Intent();
+        serviceIntent.setPackage("com.sunmi.scanner");
+        serviceIntent.setAction("com.sunmi.scanner.IScanInterface");
+        currentActivity.bindService(serviceIntent, conn, Service.BIND_AUTO_CREATE);
+        // currentActivity.startActivityForResult(serviceIntent, 2345);
+
+        try {
+                scanInterface.scan();
+                singleScanFlag = true;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @ReactMethod
