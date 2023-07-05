@@ -1,15 +1,15 @@
 {
-  "name": "react-native-sunmi-inner-scanner",
+  "name": "react-native-sunmi-infrared-scan",
   "version": "0.1.8",
-  "description": "http://docs.sunmi.com/htmls/index.html?lang=zh##V1文档资源 根据商米V1文档开发的扫码for React Native.",
-  "author": "Janus J K Lu <januslo6211@gmail.com>",
+  "description": "http://docs.sunmi.com/htmls/index.html for React Native.",
+  "author": "<fatemenouri99@gmail.com>",
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/januslo/react-native-sunmi-inner-scanner"
+    "url": "https://github.com/fatemenouri/react-native-sunmi-infrared-scan"
   },
   "bugs": {
-    "url": "https://github.com/januslo/react-native-sunmi-inner-scanner/issues"
+    "url": "https://github.com/fatemenouri/react-native-sunmi-infrared-scan/issues"
   },
   "main": "index.js",
   "scripts": {
@@ -18,12 +18,7 @@
   "keywords": [
     "react-native",
     "sunmi",
-    "scanner",
-    "商米",
-    "扫描",
-    "扫码",
-    "二维码",
-    "条形码"
+    "scanner"
   ],
   "license": "MIT",
   "private": false,
